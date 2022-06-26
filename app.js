@@ -22,6 +22,7 @@ app.get("/users/:uuid", async (req, res) => {
     });
     res.json(user);
   } catch (error) {
+    // erros should be in one place
     console.debug("error:", error);
     res.status(500).json(error);
   }
@@ -38,6 +39,40 @@ app.post("/users", async (req, res) => {
   }
   
 })
+
+app.put("/users/:uuid", async (req, res) => {
+  const { uuid } = req.params;
+  const { name, email, role } = req.body;
+  try {
+    const user = await User.findOne({where: { uuid }});
+
+    user.name = name;
+    user.email = email;
+    user.role = role;
+
+    await user.save();
+
+    res.json(user);
+  } catch (error) {
+    // erros should be in one place
+    console.debug("error:", error);
+    res.status(500).json(error);
+  }
+});
+
+app.delete("/users/:uuid", async (req, res) => {
+  const { uuid } = req.params;
+  try {
+    const user = await User.findOne({ where: { uuid } });
+    await user.destroy();
+
+    res.json({id: user.id, message: "user deleted"});
+  } catch (error) {
+    // erros should be in one place
+    console.debug("error:", error);
+    res.status(500).json(error);
+  }
+});
 
 app.get("/posts", async (req, res) => {
   try {
