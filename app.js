@@ -3,6 +3,27 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
+app.get("/users", async (req, res) => {
+  try {
+    const user = await User.findAll();
+    res.json(user);
+  } catch (error) {
+    console.debug("error:", error);
+    res.status(500).json(error);
+  }
+});
+
+app.get("/users/:uuid", async (req, res) => {
+  const { uuid } = req.params;
+  try {
+    const user = await User.findOne({where: {uuid}});
+    res.json(user);
+  } catch (error) {
+    console.debug("error:", error);
+    res.status(500).json(error);
+  }
+});
+
 app.post("/users", async (req, res) => {
   const {name, email, role} = req.body;
   try {
